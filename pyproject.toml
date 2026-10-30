@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "xlsx-audit"
+version = "0.1.0"
+description = "Find broken references, external links, hard-coded overrides and formula changes in Excel workbooks (.xlsx), from the command line, CI or Python."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "gravitybendr" }]
+keywords = [
+  "excel", "xlsx", "xlsm", "spreadsheet", "audit", "formula", "lint", "diff",
+  "financial model", "model review", "openpyxl", "sarif", "ci",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Financial :: Spreadsheet",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = ["openpyxl>=3.1,<4"]
+
+[project.scripts]
+xlsx-audit = "xlsx_audit.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/gravitybendr/xlsx-audit"
+Issues = "https://github.com/gravitybendr/xlsx-audit/issues"
+Changelog = "https://github.com/gravitybendr/xlsx-audit/blob/main/CHANGELOG.md"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/xlsx_audit"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,7 @@
+- id: xlsx-audit
+  name: xlsx-audit
+  description: Check Excel workbooks for broken references, external links, typed-over formulas and other mistakes.
+  entry: xlsx-audit lint
+  language: python
+  files: \.(xlsx|xlsm)$
+  types: [file]
