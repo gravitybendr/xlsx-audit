@@ -169,13 +169,13 @@ jobs:
     permissions:
       security-events: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install xlsx-audit
       - run: xlsx-audit lint models/*.xlsx --format sarif --output xlsx-audit.sarif --fail-on never
-      - uses: github/codeql-action/upload-sarif@v3
+      - uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: xlsx-audit.sarif
       - run: xlsx-audit lint models/*.xlsx --format markdown >> "$GITHUB_STEP_SUMMARY"
