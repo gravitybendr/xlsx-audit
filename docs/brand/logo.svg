@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>xlsx-audit</title>
+  <!-- A grid of cells with one flagged cell, holding a formula sign, lifted out of the corner. -->
+  <defs>
+    <mask id="xa-gap">
+      <rect width="64" height="64" fill="#fff"/>
+      <rect x="30" y="30" width="34" height="34" rx="10" fill="#000"/>
+    </mask>
+  </defs>
+  <g mask="url(#xa-gap)">
+    <rect x="2" y="2" width="52" height="52" rx="12" fill="#25368A"/>
+    <g fill="#D3DDF5">
+      <rect x="9" y="9" width="11" height="11" rx="2.5"/>
+      <rect x="23" y="9" width="11" height="11" rx="2.5"/>
+      <rect x="37" y="9" width="11" height="11" rx="2.5"/>
+      <rect x="9" y="23" width="11" height="11" rx="2.5"/>
+      <rect x="23" y="23" width="11" height="11" rx="2.5"/>
+      <rect x="9" y="37" width="11" height="11" rx="2.5"/>
+    </g>
+  </g>
+  <rect x="35" y="35" width="26" height="26" rx="7" fill="#FFB020"/>
+  <g fill="#25368A">
+    <rect x="41" y="42.5" width="14" height="3.4" rx="1.7"/>
+    <rect x="41" y="50" width="14" height="3.4" rx="1.7"/>
+  </g>
+</svg>

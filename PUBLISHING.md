@@ -38,8 +38,22 @@ Publishing runs from GitHub Actions with PyPI's trusted publishing, so there is 
 
 ## Listing
 
-- **PyPI page:** built from `README.md`, plus the keywords and classifiers in `pyproject.toml`.
+- **PyPI page:** built from `README.md`, plus the summary, keywords and classifiers in `pyproject.toml`, **as they were in the release**. 0.1.0 is live with the old README; the new README, summary and keywords appear on PyPI with the next release.
+- **README images** load from `https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/...`. They show on GitHub and PyPI only after `docs/` is pushed to `main`, so push before releasing. (The repo is public; if it ever goes private, the images stop loading on PyPI.)
+- **Listing copy:** `marketing/pypi.md` (summary, image captions, keywords) and `marketing/github.md` (repo description, topics, social preview, and the `gh repo edit` command to apply them).
 - **Search phrases worth a mention when sharing:** "excel formula audit", "xlsx lint", "spreadsheet diff", "financial model review", "find hardcoded values in excel", "excel #REF! finder".
+
+## Images
+
+`scripts/make_images.py` makes every image from real output:
+
+```
+.venv\Scripts\python.exe scripts\make_images.py
+```
+
+It rebuilds the demo workbooks in `docs/demo/` (`scripts/demo_workbooks.py`), runs the CLI on them and saves the output to `docs/demo/output/`, writes HTML pages to `build/images/`, and renders them with headless Chromium in Docker (`scripts/render_pages.sh`, image `mcr.microsoft.com/playwright:v1.64.1-noble`). It writes `docs/images/*.png` and the logo PNGs and social preview in `docs/brand/`. The logo source is `docs/brand/logo.svg`.
+
+When the output changes (a new version, a changed message), run it again and copy the new text from `docs/demo/output/lint.txt` and `diff.txt` into the README examples.
 
 ## Paid tier (not built yet)
 

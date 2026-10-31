@@ -5,15 +5,16 @@ build-backend = "hatchling.build"
 [project]
 name = "xlsx-audit"
 version = "0.1.0"
-description = "Find broken references, external links, hard-coded overrides and formula changes in Excel workbooks (.xlsx), from the command line, CI or Python."
+description = "Lint and diff Excel workbooks: find broken references, numbers typed over formulas and links to other files, and see what changed between two versions. Command line, CI or Python."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "gravitybendr" }]
 keywords = [
-  "excel", "xlsx", "xlsm", "spreadsheet", "audit", "formula", "lint", "diff",
-  "financial model", "model review", "openpyxl", "sarif", "ci",
+  "excel", "xlsx", "xlsm", "spreadsheet", "audit", "formula", "lint", "linter", "diff",
+  "excel diff", "spreadsheet diff", "financial model", "model review", "formula audit",
+  "hardcoded values", "external links", "openpyxl", "sarif", "ci",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -39,6 +40,7 @@ xlsx-audit = "xlsx_audit.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/gravitybendr/xlsx-audit"
+Source = "https://github.com/gravitybendr/xlsx-audit"
 Issues = "https://github.com/gravitybendr/xlsx-audit/issues"
 Changelog = "https://github.com/gravitybendr/xlsx-audit/blob/main/CHANGELOG.md"
 

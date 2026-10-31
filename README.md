@@ -1,6 +1,37 @@
-# xlsx-audit
+# <img src="https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/brand/logo-128.png" width="40" height="40" alt=""> xlsx-audit
 
-**Find the mistakes hiding in Excel workbooks, and see exactly what changed between two versions.** From the command line, in CI, or from Python. Nothing is uploaded: your files are read on your own machine.
+**A linter and diff for Excel workbooks.** Find broken references, numbers typed over formulas and links to other files, and see exactly what changed between two versions. From the command line, in CI, or from Python. Your files never leave your machine.
+
+[![PyPI](https://img.shields.io/pypi/v/xlsx-audit)](https://pypi.org/project/xlsx-audit/)
+[![Python](https://img.shields.io/pypi/pyversions/xlsx-audit)](https://pypi.org/project/xlsx-audit/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/gravitybendr/xlsx-audit/blob/main/LICENSE)
+
+![xlsx-audit lint on a demo sales model: the Sales sheet with formulas shown, 7 flagged cells, a flagged hidden sheet and a list of 11 findings](https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/images/hero.png)
+
+<sub>The demo workbook <code>docs/demo/model_v1.xlsx</code> (made-up numbers), drawn from its cells with formulas shown. The highlighted cells and the list come from <code>xlsx-audit lint --format json</code> on that file. <code>scripts/make_images.py</code> makes the image.</sub>
+
+## Who it's for
+
+- **Analysts and model reviewers** checking a financial model before it goes to a client, a lender or a board.
+- **Teams that keep workbooks in Git** and want a pull-request check, the way code has a linter.
+- **Developers** whose apps generate or consume `.xlsx` files and need to test them.
+
+## The problem
+
+A workbook can look right and be wrong. Someone types `535` over one cell in a column of formulas, and the total still adds up. A formula picks up the price from the row below. A sheet that fed the model was deleted, and `#REF!` hides behind `IFERROR`. When the next version arrives, Excel can't tell you what changed, and a cell-by-cell compare drowns you in noise as soon as one row was inserted.
+
+## What you get
+
+- **Ten checks on one workbook**: broken references and names, error values traced to the cell they come from, links to other workbooks, numbers typed over formulas, formulas that break the pattern of their neighbours, formulas that include their own cell, hidden and very hidden sheets, volatile functions, and numbers typed inside formulas.
+- **A diff that understands spreadsheets.** Rows or columns are lined up first and references are followed to where their cells moved, so an inserted row is one change, not hundreds. Formulas pasted over with values, changed formulas, renamed sheets, new links, and problems that are new or fixed are each reported once.
+- **Output for people and for tools**: readable text, JSON, SARIF for GitHub code scanning, and Markdown for pull-request comments and job summaries.
+- **Exit codes for CI**, with `--fail-on` to choose the level that fails a build.
+- **A Python API** (`audit()`, `compare()`) for tests and scripts.
+- **Read-only and offline.** It reads the file and reports. No network requests and no Excel needed, on Windows, macOS or Linux.
+
+## Quick start
+
+Python 3.9 or newer.
 
 ```
 pip install xlsx-audit
@@ -8,30 +39,41 @@ xlsx-audit lint model.xlsx
 xlsx-audit diff model_v1.xlsx model_v2.xlsx
 ```
 
-It finds:
-
-- **Numbers typed over formulas**: one cell in a column of `=A*B` that someone overwrote with `535`.
-- **Formulas that break the pattern**: `=A5*B6` in a column where every other row is `=A*B` of its own row.
-- **Broken references**: `#REF!` in formulas and defined names, even when `IFERROR` hides it.
-- **Error values**, traced to the cell they come from, so one `#REF!` doesn't drown you in 300 copies.
-- **Links to other workbooks** that break when a file moves.
-- **Circular references** where a total includes its own cell.
-- **Very hidden sheets**, volatile functions such as `INDIRECT` and `OFFSET`, and magic numbers inside formulas.
-
-And between two versions of a workbook, it tells you **which formulas changed, which were pasted over with values, which rows were inserted**, and which problems are new. Inserting a row doesn't make every cell below it look different.
-
-## Who it's for
-
-- **Analysts and model reviewers** checking a financial model before it goes to a client or a board.
-- **Teams that keep workbooks in Git** and want a pull-request check, like a linter for code.
-- **Developers** whose apps generate or consume `.xlsx` files and need to test them.
-
-## What it looks like
+Or run it without installing, with [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/):
 
 ```
-$ xlsx-audit lint model.xlsx
-xlsx-audit 0.1.0  model.xlsx
-3 sheets, 30 cells, 10 formulas
+uvx xlsx-audit lint model.xlsx
+pipx run xlsx-audit lint model.xlsx
+```
+
+To try it on the two demo workbooks used on this page, clone the repo and run it in [`docs/demo/`](https://github.com/gravitybendr/xlsx-audit/tree/main/docs/demo):
+
+```
+git clone https://github.com/gravitybendr/xlsx-audit
+cd xlsx-audit/docs/demo
+xlsx-audit lint model_v1.xlsx
+xlsx-audit diff model_v1.xlsx model_v2.xlsx
+```
+
+## Examples
+
+All output below is what xlsx-audit 0.1.0 printed for the demo workbooks. The saved output is in [`docs/demo/output/`](https://github.com/gravitybendr/xlsx-audit/tree/main/docs/demo/output).
+
+### Check a workbook
+
+`model_v1.xlsx` is a small sales model with one of each common mistake:
+
+![Terminal output of xlsx-audit lint model_v1.xlsx: 11 findings, 3 errors, 5 warnings, 3 info](https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/images/lint-output.png)
+
+<sub>Severity colours are added in the image; the command prints plain ASCII text.</sub>
+
+<details>
+<summary>The same output as text</summary>
+
+```
+$ xlsx-audit lint model_v1.xlsx
+xlsx-audit 0.1.0  model_v1.xlsx
+3 sheets, 32 cells, 10 formulas
 11 findings: 3 errors, 5 warnings, 3 info
 
 ERROR    XA002 broken-reference (1)
@@ -66,13 +108,23 @@ INFO     XA009 hardcoded-number (1)
   Sales!E2  Typed number 1.15 inside =[1]Prices!A1*1.15
 ```
 
-Comparing the next version, where someone inserted a row, pasted a value over a formula, changed the total and renamed a sheet:
+</details>
+
+### Compare two versions
+
+In `model_v2.xlsx`, someone inserted a row, pasted a value over a formula, fixed the total and renamed a sheet:
+
+![Old and new versions of the Sales sheet side by side, with the inserted row, the overwritten formula and the changed total highlighted, and the 6 changes xlsx-audit reported](https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/images/diff.png)
+
+<sub>Drawn from the cells of both demo workbooks (columns A-D of the Sales sheet). The highlights and the list are the output of <code>xlsx-audit diff --format json</code>.</sub>
+
+Row 2 was inserted, so 21 other cells on Sales moved down one row. None of them is reported; only the six real changes are:
 
 ```
 $ xlsx-audit diff model_v1.xlsx model_v2.xlsx
 xlsx-audit 0.1.0  model_v1.xlsx -> model_v2.xlsx
-old: 3 sheets, 30 cells, 10 formulas
-new: 3 sheets, 31 cells, 9 formulas
+old: 3 sheets, 32 cells, 10 formulas
+new: 3 sheets, 33 cells, 9 formulas
 6 changes: 2 warnings, 4 info
 
 WARNING  XD021 formula-overwritten (1)
@@ -94,22 +146,13 @@ INFO     XD041 resolved-issue (1)
   Sales!C8  Resolved XA010 self-reference: Formula includes its own cell (C2:C8), a circular reference: =SUM(C2:C8)
 ```
 
-Every formula below the inserted row moved down one row, and none of them is reported. Only the six real changes are.
+### Report in a pull request
 
-## Install
+`--format markdown` writes a table you can post as a pull-request comment or add to a GitHub Actions job summary:
 
-Python 3.9 or newer, on Windows, macOS or Linux.
+![The Markdown report for model_v1.xlsx, rendered: a heading, the counts and a table of 11 findings](https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/images/markdown-report.png)
 
-```
-pip install xlsx-audit
-```
-
-Or run it without installing, using [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/):
-
-```
-uvx xlsx-audit lint model.xlsx
-pipx run xlsx-audit lint model.xlsx
-```
+<sub><code>xlsx-audit lint model_v1.xlsx --format markdown</code>, rendered as HTML.</sub>
 
 ## Usage
 
@@ -241,6 +284,42 @@ Each `Finding` has `code`, `slug`, `severity`, `sheet`, `cell`, `message` and `d
 
 Formulas are compared in relative (R1C1) form: `=A2*B2` in C2 and `=A3*B3` in C3 are the same formula copied down. In each unbroken run of cells down a column or across a row, the formula most cells share (at least three copies) is the pattern. Inside the stretch it covers, a typed number is flagged (XA004), and so is a formula that appears at most twice (XA005). A rare variant is likely a slip; a variant that repeats is likely a second block on purpose. Cells at the edges of a run, such as a header or a first row that starts a running total, aren't flagged.
 
+## How it compares
+
+Other tools do parts of this job well. Pick by where you work and what you need.
+
+| Tool | Good at | Where xlsx-audit is different |
+|---|---|---|
+| Excel's own error checking (the green triangles, *Formulas > Error Checking*) | Flags inconsistent formulas and error values while you edit. Built in. | Runs without Excel, on many files at once, in CI. Also reports links to other workbooks, very hidden sheets and broken names, in one report per file. |
+| Microsoft Inquire and Spreadsheet Compare | Workbook analysis and a visual compare of two files, from inside Office. | Those come with some Office editions on Windows only. xlsx-audit runs wherever Python does, including CI. |
+| Commercial auditing tools, such as PerfectXL or Operis OAK | Deep, visual model review, with reports for sign-off. | xlsx-audit is free and scriptable, with fewer checks and no visual report. |
+| Excel version control, such as xltrail or git-xl | Workbook history in Git, including VBA. | xlsx-audit doesn't diff VBA, but it lints each version and reports problems that are new or fixed. |
+| openpyxl or pandas | Reading cells so you can write your own checks. | The checks, the diff and the report formats are already written and tested. |
+| formulas or pycel | Calculating workbooks in Python. | xlsx-audit doesn't calculate. It checks structure and uses the results Excel saved. |
+
+## FAQ
+
+**Does it change my workbook?**
+No. It only reads the file and never writes to it. With `--output` it writes the report file, nothing else.
+
+**Do I need Excel installed?**
+No. It reads the `.xlsx` file directly, on Windows, macOS or Linux.
+
+**Does it calculate formulas?**
+No. Error values (XA001) come from the results Excel stored when it last saved the file. Every other check reads the formulas themselves.
+
+**How fast is it?**
+On a synthetic workbook with 45,000 cells and 25,000 formulas, `lint` took about 1.1 seconds on a Windows PC, and `diff` against a copy with one inserted row took about 2.9 seconds.
+
+**It flags something I did on purpose. How do I quiet it?**
+Use `--ignore` with the rule code or name, or `--select` to run only the rules you want. There is no per-cell suppression or config file yet.
+
+**Can I use it on `.xls` or `.xlsb` files?**
+Not directly. Save them as `.xlsx` first.
+
+**Is it free?**
+Yes, under the MIT licence.
+
 ## Limits
 
 - **It reads what Excel saved.** Error values (XA001) come from the results Excel stored when the file was last saved. Files written by other programs, including `openpyxl`, often have no stored results; every other check still works on them.
@@ -253,6 +332,6 @@ Formulas are compared in relative (R1C1) form: `=A2*B2` in C2 and `=A3*B3` in C3
 
 Everything runs locally. xlsx-audit makes no network requests and sends nothing anywhere.
 
-## License
+## Licence
 
-MIT
+MIT. See [LICENSE](https://github.com/gravitybendr/xlsx-audit/blob/main/LICENSE).

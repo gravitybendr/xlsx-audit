@@ -1,0 +1,96 @@
+{
+  "tool": "xlsx-audit",
+  "version": "0.1.0",
+  "reports": [
+    {
+      "kind": "diff",
+      "files": [
+        "model_v1.xlsx",
+        "model_v2.xlsx"
+      ],
+      "stats": {
+        "old": {
+          "sheets": 3,
+          "cells": 32,
+          "formulas": 10
+        },
+        "new": {
+          "sheets": 3,
+          "cells": 33,
+          "formulas": 9
+        }
+      },
+      "counts": {
+        "error": 0,
+        "warning": 2,
+        "info": 4
+      },
+      "findings": [
+        {
+          "code": "XD021",
+          "severity": "warning",
+          "message": "Formula =A3*B3*Inputs!$B$1 was replaced by the value 42.8 (was C3 in the old version)",
+          "sheet": "Sales",
+          "cell": "C4",
+          "old_cell": "C3",
+          "old": "=A3*B3*Inputs!$B$1",
+          "new": "42.8",
+          "rule": "formula-overwritten"
+        },
+        {
+          "code": "XD040",
+          "severity": "warning",
+          "message": "New XA004 hardcoded-in-formula-range: Typed value 42.8 inside a run of 3 matching formulas (expected =A4*B4*Inputs!$B$1)",
+          "sheet": "Sales",
+          "cell": "C4",
+          "detail": {
+            "rule": "XA004"
+          },
+          "rule": "new-issue"
+        },
+        {
+          "code": "XD010",
+          "severity": "info",
+          "message": "Row 2 inserted",
+          "sheet": "Sales",
+          "detail": {
+            "from": 2,
+            "to": 2
+          },
+          "rule": "rows-inserted"
+        },
+        {
+          "code": "XD041",
+          "severity": "info",
+          "message": "Resolved XA010 self-reference: Formula includes its own cell (C2:C8), a circular reference: =SUM(C2:C8)",
+          "sheet": "Sales",
+          "old_cell": "C8",
+          "detail": {
+            "rule": "XA010"
+          },
+          "rule": "resolved-issue"
+        },
+        {
+          "code": "XD020",
+          "severity": "info",
+          "message": "Formula changed: =SUM(C2:C8) -> =SUM(C3:C8) (was C8 in the old version)",
+          "sheet": "Sales",
+          "cell": "C9",
+          "old_cell": "C8",
+          "old": "=SUM(C2:C8)",
+          "new": "=SUM(C3:C8)",
+          "rule": "formula-changed"
+        },
+        {
+          "code": "XD003",
+          "severity": "info",
+          "message": "Sheet Notes renamed to Internal notes",
+          "sheet": "Internal notes",
+          "old": "Notes",
+          "new": "Internal notes",
+          "rule": "sheet-renamed"
+        }
+      ]
+    }
+  ]
+}

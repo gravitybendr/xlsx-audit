@@ -1,0 +1,34 @@
+xlsx-audit 0.1.0  model_v1.xlsx
+3 sheets, 32 cells, 10 formulas
+11 findings: 3 errors, 5 warnings, 3 info
+
+ERROR    XA002 broken-reference (1)
+  Sales!D2  Formula refers to deleted cells: =#REF!*2
+
+ERROR    XA008 broken-name (1)
+  (workbook)  Defined name OldRange points to #REF!
+
+ERROR    XA010 self-reference (1)
+  Sales!C8  Formula includes its own cell (C2:C8), a circular reference: =SUM(C2:C8)
+
+WARNING  XA003 external-link (2)
+  (workbook)  Workbook links to another file: file:///C:/Finance/Prices.xlsx
+  Sales!E2    Formula uses another workbook (file:///C:/Finance/Prices.xlsx): =[1]Prices!A1*1.15
+
+WARNING  XA004 hardcoded-in-formula-range (1)
+  Sales!C4  Typed value 535 inside a run of 4 matching formulas (expected =A4*B4*Inputs!$B$1)
+
+WARNING  XA005 inconsistent-formula (1)
+  Sales!C5  =A5*B6*Inputs!$B$1 breaks the pattern of the 4 matching formulas around it (expected =A5*B5*Inputs!$B$1)
+
+WARNING  XA007 hidden-sheet (1)
+  Notes  Sheet Notes is very hidden: it can only be shown with VBA
+
+INFO     XA001 error-value (1)
+  Sales!D3  Shows #REF! because it uses D2, which also shows an error
+
+INFO     XA006 volatile-function (1)
+  Sales!F2  Uses INDIRECT, which recalculates on every change and hides what it reads
+
+INFO     XA009 hardcoded-number (1)
+  Sales!E2  Typed number 1.15 inside =[1]Prices!A1*1.15

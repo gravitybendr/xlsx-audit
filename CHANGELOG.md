@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Diff: references past the end of the data now move when rows or columns are inserted or deleted above them, as in Excel. With data in rows 2 to 21, inserting a row turns `=SUM(A2:A100)` into `=SUM(A2:A101)`, and 0.1.0 reported that as a changed formula (XD020). Rows typed into the empty rows below the data still move nothing. Found while making the README images; tests added.
+
+### Documentation
+
+- README rewritten: who it's for, what you get, examples with images of real output, a comparison with other tools, FAQ. Image and link URLs are absolute so they work on PyPI.
+- Logo (`docs/brand/logo.svg`, PNGs) and a GitHub social preview image.
+- Demo workbooks in `docs/demo/` and `scripts/make_images.py`, which runs xlsx-audit on them and renders the README images from its output.
+- New PyPI summary and more keywords in `pyproject.toml`.
+
 ## 0.1.0 (30 October 2026)
 
 First version.
