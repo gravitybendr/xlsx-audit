@@ -132,6 +132,9 @@ def test_remap_moves_references_through_the_row_map():
     assert remap("Sales!C2*2", "Summary", maps) == canonical("Sales!C3*2")
     # Absolute markers are kept; external references untouched.
     assert remap("$C$2+[1]Prices!A2", "Sales", maps) == canonical("$C$3+[1]Prices!A2")
+    # Rows past the end of the data move with the last row: Excel shifts them too.
+    assert remap("SUM(C2:C100)", "Sales", maps) == canonical("SUM(C3:C101)")
+    assert remap("SUM(Sales!20:30)", "Summary", maps) == canonical("SUM(Sales!21:31)")
 
 
 def test_remap_columns_and_renamed_sheets():

@@ -252,25 +252,49 @@ def normalize(formula: str, row: int, col: int, sheet_alias: dict[str, str] | No
     return _rewrite(formula, fn)
 
 
+def _tail(line_map: dict[int, int]) -> tuple[int, int]:
+    last = max(line_map, default=0)
+    return last, (line_map[last] - last if last else 0)
+
+
+class LineMap(dict):
+    """Old line number -> new line number for the lines of a sheet's used range.
+
+    Lines past the end move with the last line in the map, as in Excel: with
+    data in rows 2-21, inserting a row above moves the A100 in SUM(A2:A100) to
+    A101, while typing data into the empty rows below the data moves nothing.
+    """
+
+    def __init__(self, pairs=()):
+        super().__init__(pairs)
+        self.tail = _tail(self)
+
+
+def _moved(line_map: dict[int, int], n: int) -> int:
+    if n in line_map:
+        return line_map[n]
+    last, offset = getattr(line_map, "tail", None) or _tail(line_map)
+    return n + offset if n > last else n
+
+
 def _map_endpoint(part: str, axis: int, line_map: dict[int, int]) -> str:
     m = _CELL.match(part)
     if m:
         cabs, letters, rabs, num = m.groups()
         r, c = int(num), _col(letters)
         if axis == 0:
-            r = line_map.get(r, r)
+            r = _moved(line_map, r)
         else:
-            c = line_map.get(c, c)
+            c = _moved(line_map, c)
         return f"{cabs}{get_column_letter(c)}{rabs}{r}"
     m = _COL.match(part)
     if m and axis == 1:
         cabs, letters = m.groups()
-        c = _col(letters)
-        return f"{cabs}{get_column_letter(line_map.get(c, c))}"
+        return f"{cabs}{get_column_letter(_moved(line_map, _col(letters)))}"
     m = _ROW.match(part)
     if m and axis == 0:
         rabs, num = m.groups()
-        return f"{rabs}{line_map.get(int(num), int(num))}"
+        return f"{rabs}{_moved(line_map, int(num))}"
     return part.upper()
 
 

@@ -18,7 +18,7 @@ from difflib import SequenceMatcher
 
 from .checks import lint
 from .model import DIFF_RULES, Finding, severity_rank, sort_findings
-from .refs import canonical, cell_name, normalize, parse_cell, remap, shape
+from .refs import LineMap, canonical, cell_name, normalize, parse_cell, remap, shape
 from .workbook import Cell, Sheet, Workbook
 
 Pos = tuple[int, int]
@@ -330,7 +330,7 @@ def diff(old: Workbook, new: Workbook, *, include_values: bool = True, lint_sele
         findings.append(Finding("XD001", "info", f"Sheet {s.name} added ({len(s.cells)} cells)", sheet=s.name))
 
     plans = [_plan(o, n, renamed) for o, n in pairs]
-    maps: Maps = {p.old.name.lower(): (p.new.name, p.axis, p.line_map) for p in plans}
+    maps: Maps = {p.old.name.lower(): (p.new.name, p.axis, LineMap(p.line_map)) for p in plans}
     pos_maps: dict[str, tuple[str, dict[Pos, Pos]]] = {}
     for plan in plans:
         sheet_findings, pos_map = _apply(plan, maps, renamed)

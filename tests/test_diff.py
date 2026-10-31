@@ -68,6 +68,31 @@ def test_reference_from_another_sheet_follows_inserted_rows(wb):
     assert not at(result.findings, "XD020"), [f.message for f in result.findings]
 
 
+def test_range_past_the_data_follows_an_inserted_row(wb):
+    # SUM(C2:C100) over three rows of data: Excel turns it into SUM(C3:C101).
+    old = wb({"Sales": table([1, 2, 3], total=False), "Summary": {"B1": F("SUM(Sales!C2:C100)", 60)}})
+    new_sales = table([1, 2, 3], start=3, total=False)
+    new_sales["A2"] = "Q1"
+    new = wb({"Sales": new_sales, "Summary": {"B1": F("SUM(Sales!C3:C101)", 60)}})
+    result = diff(old, new)
+    assert not at(result.findings, "XD020"), [f.message for f in result.findings]
+
+
+def test_range_past_the_data_follows_a_deleted_row(wb):
+    old = wb({"Sales": table([1, 2, 3, 4], total=False), "Summary": {"B1": F("SUM(Sales!C2:C100)", 100)}})
+    new = wb({"Sales": table([1, 3, 4], total=False), "Summary": {"B1": F("SUM(Sales!C2:C99)", 80)}})
+    result = diff(old, new)
+    assert codes(result.findings) == ["XD011"], [f.message for f in result.findings]
+
+
+def test_rows_typed_below_the_data_move_no_range(wb):
+    # New rows typed into the empty rows under the data: the range stays C2:C100.
+    old = wb({"Sales": table([1, 2, 3], total=False), "Summary": {"B1": F("SUM(Sales!C2:C100)", 60)}})
+    new = wb({"Sales": table([1, 2, 3, 4, 5], total=False), "Summary": {"B1": F("SUM(Sales!C2:C100)", 150)}})
+    result = diff(old, new)
+    assert not at(result.findings, "XD020"), [f.message for f in result.findings]
+
+
 def test_formula_overwritten_with_a_value(wb):
     old = wb({"S": table([1, 2, 3])})
     new = wb({"S": table([1, 2, 3], extra={"C3": 20})})
