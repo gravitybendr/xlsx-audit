@@ -38,7 +38,7 @@ Publishing runs from GitHub Actions with PyPI's trusted publishing, so there is 
 
 ## Listing
 
-- **PyPI page:** built from `README.md`, plus the summary, keywords and classifiers in `pyproject.toml`, **as they were in the release**. 0.1.0 is live with the old README; the new README, summary and keywords appear on PyPI with the next release.
+- **PyPI page:** built from `README.md`, plus the summary, keywords and classifiers in `pyproject.toml`, **as they were in the release**. 0.1.0 had the first README; 0.1.1 has the current one with images. A README change reaches PyPI only with a new release.
 - **README images** load from `https://raw.githubusercontent.com/gravitybendr/xlsx-audit/main/docs/...`. They show on GitHub and PyPI only after `docs/` is pushed to `main`, so push before releasing. (The repo is public; if it ever goes private, the images stop loading on PyPI.)
 - **Listing copy:** `marketing/pypi.md` (summary, image captions, keywords) and `marketing/github.md` (repo description, topics, social preview, and the `gh repo edit` command to apply them).
 - **Search phrases worth a mention when sharing:** "excel formula audit", "xlsx lint", "spreadsheet diff", "financial model review", "find hardcoded values in excel", "excel #REF! finder".

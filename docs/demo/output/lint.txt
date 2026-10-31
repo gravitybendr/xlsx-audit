@@ -1,4 +1,4 @@
-xlsx-audit 0.1.0  model_v1.xlsx
+xlsx-audit 0.1.1  model_v1.xlsx
 3 sheets, 32 cells, 10 formulas
 11 findings: 3 errors, 5 warnings, 3 info
 

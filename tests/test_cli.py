@@ -66,7 +66,7 @@ def test_markdown_and_output_file(broken, tmp_path):
 def test_several_files(clean, broken, capsys):
     assert main(["lint", clean, broken]) == 1
     out = capsys.readouterr().out
-    assert out.count("xlsx-audit 0.1.0") == 2
+    assert out.count(f"xlsx-audit {__version__}") == 2
 
 
 def test_wildcards_are_expanded(clean, broken, tmp_path, capsys):

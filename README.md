@@ -57,7 +57,7 @@ xlsx-audit diff model_v1.xlsx model_v2.xlsx
 
 ## Examples
 
-All output below is what xlsx-audit 0.1.0 printed for the demo workbooks. The saved output is in [`docs/demo/output/`](https://github.com/gravitybendr/xlsx-audit/tree/main/docs/demo/output).
+All output below is what xlsx-audit 0.1.1 printed for the demo workbooks. The saved output is in [`docs/demo/output/`](https://github.com/gravitybendr/xlsx-audit/tree/main/docs/demo/output).
 
 ### Check a workbook
 
@@ -72,7 +72,7 @@ All output below is what xlsx-audit 0.1.0 printed for the demo workbooks. The sa
 
 ```
 $ xlsx-audit lint model_v1.xlsx
-xlsx-audit 0.1.0  model_v1.xlsx
+xlsx-audit 0.1.1  model_v1.xlsx
 3 sheets, 32 cells, 10 formulas
 11 findings: 3 errors, 5 warnings, 3 info
 
@@ -122,7 +122,7 @@ Row 2 was inserted, so 21 other cells on Sales moved down one row. None of them 
 
 ```
 $ xlsx-audit diff model_v1.xlsx model_v2.xlsx
-xlsx-audit 0.1.0  model_v1.xlsx -> model_v2.xlsx
+xlsx-audit 0.1.1  model_v1.xlsx -> model_v2.xlsx
 old: 3 sheets, 32 cells, 10 formulas
 new: 3 sheets, 33 cells, 9 formulas
 6 changes: 2 warnings, 4 info
@@ -229,7 +229,7 @@ jobs:
 ```yaml
 repos:
   - repo: https://github.com/gravitybendr/xlsx-audit
-    rev: v0.1.0
+    rev: v0.1.1
     hooks:
       - id: xlsx-audit
 ```

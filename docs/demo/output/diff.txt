@@ -1,4 +1,4 @@
-xlsx-audit 0.1.0  model_v1.xlsx -> model_v2.xlsx
+xlsx-audit 0.1.1  model_v1.xlsx -> model_v2.xlsx
 old: 3 sheets, 32 cells, 10 formulas
 new: 3 sheets, 33 cells, 9 formulas
 6 changes: 2 warnings, 4 info

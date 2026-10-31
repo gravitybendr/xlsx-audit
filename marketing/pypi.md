@@ -2,7 +2,7 @@
 
 Project page: <https://pypi.org/project/xlsx-audit/>
 
-PyPI builds the page from `pyproject.toml` and `README.md` **of the release**. Version 0.1.0 is live with the old README and summary; everything below shows up with the next release. PyPI has no icon field: the logo appears through the README.
+PyPI builds the page from `pyproject.toml` and `README.md` **of the release**. From 0.1.1, the PyPI page shows this README, summary and keywords. PyPI has no icon field: the logo appears through the README.
 
 ## Name
 

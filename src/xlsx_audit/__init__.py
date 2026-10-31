@@ -7,7 +7,7 @@ and formula changes in Excel workbooks.
 """
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from pathlib import Path  # noqa: E402
 
